@@ -7,6 +7,11 @@ from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
 from cryptography.exceptions import InvalidSignature, InvalidTag # Upewnij się, że InvalidTag jest importowane
+import datetime
+from cryptography import x509
+from cryptography.x509.oid import NameOID
+from cryptography.hazmat.primitives import hashes # Upewnij się, że jest
+
 
 # Stałe
 RSA_KEY_SIZE = 4096
@@ -172,3 +177,60 @@ def verify_rsa(public_key, signature, data_hash):
     except Exception as e:
         print(f"Błąd podczas weryfikacji RSA: {e}")
         return False
+    
+
+def create_self_signed_cert(private_key, public_key, subject_name="PAdES Emulation User"):
+        """Tworzy prosty samopodpisany certyfikat X.509 dla danej pary kluczy."""
+
+        subject = issuer = x509.Name([
+            x509.NameAttribute(NameOID.COUNTRY_NAME, u"PL"),
+            x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, u"Pomorskie"),
+            x509.NameAttribute(NameOID.LOCALITY_NAME, u"Gdansk"),
+            x509.NameAttribute(NameOID.ORGANIZATION_NAME, u"PG Student Project"),
+            x509.NameAttribute(NameOID.COMMON_NAME, subject_name),
+        ])
+
+        # Certyfikat ważny od teraz przez 1 rok
+        one_year = datetime.timedelta(days=365)
+        now = datetime.datetime.now(datetime.timezone.utc) # Poprawione na UTC
+
+        builder = x509.CertificateBuilder()
+        builder = builder.subject_name(subject)
+        builder = builder.issuer_name(issuer)
+        builder = builder.public_key(public_key)
+        # Numer seryjny - unikalny, tutaj używamy losowych bajtów
+        builder = builder.serial_number(x509.random_serial_number())
+        builder = builder.not_valid_before(now)
+        builder = builder.not_valid_after(now + one_year)
+
+        # Dodaj podstawowe rozszerzenia
+        builder = builder.add_extension(
+            x509.BasicConstraints(ca=False, path_length=None), critical=True,
+        )
+        # Można dodać KeyUsage, np. digital_signature
+        builder = builder.add_extension(
+            x509.KeyUsage(
+                digital_signature=True, key_encipherment=False, data_encipherment=False,
+                content_commitment=False, key_agreement=False, key_cert_sign=False,
+                crl_sign=False, encipher_only=False, decipher_only=False
+            ), critical=True
+        )
+
+        # Podpisz certyfikat kluczem prywatnym
+        certificate = builder.sign(private_key, HASH_ALGORITHM, default_backend())
+
+        return certificate
+
+def serialize_certificate(certificate):
+    """Serializuje certyfikat do formatu PEM."""
+    pem = certificate.public_bytes(encoding=serialization.Encoding.PEM)
+    return pem
+
+def load_certificate_from_pem(pem_data):
+    """Wczytuje certyfikat z danych PEM."""
+    try:
+        certificate = x509.load_pem_x509_certificate(pem_data, default_backend())
+        return certificate
+    except ValueError as e:
+        print(f"Błąd ładowania certyfikatu: {e}")
+        return None
