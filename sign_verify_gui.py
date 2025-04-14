@@ -2,31 +2,26 @@ import tkinter as tk
 from tkinter import ttk, filedialog, messagebox, scrolledtext
 import os
 import time
-import datetime # Potrzebne do certyfikatu
+import datetime
 import crypto_utils
 import drive_utils
 
-# Importy PyHanko - z poprawionym PdfStamper
 try:
     from pyhanko.pdf_utils.incremental_writer import IncrementalPdfFileWriter
     from pyhanko.sign import signers
     
-    from pyhanko.stamp import PdfStamper # <-- POPRAWIONY IMPORT
+    from pyhanko.stamp import PdfStamper
     from pyhanko.pdf_utils.reader import PdfFileReader
     from pyhanko.sign.validation import validate_pdf_signature
     from pyhanko.sign.validation.errors import SignatureValidationError
     from pyhanko.sign.general import UnacceptableSignerError
     from pyhanko.sign.signers.pdf_signer import PreSignValidationStatus
     from cryptography.hazmat.primitives import serialization
-    from cryptography import x509
     PYHANKO_AVAILABLE = True
 except ImportError as e:
     print("="*30)
     print(f" UWAGA: Błąd podczas importowania PyHanko lub jego zależności!")
     print(f" SZCZEGÓŁY BŁĘDU: {e}")
-    print(" Funkcjonalność podpisywania/weryfikacji PDF może nie działać.")
-    print(" Sprawdź instalację PyHanko i jego zależności.")
-    print(" Możesz spróbować: python -m pip install --upgrade --force-reinstall pyhanko")
     print("="*30)
     PYHANKO_AVAILABLE = False
 
@@ -34,10 +29,9 @@ except ImportError as e:
 class SignVerifyApp(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("Podpisywanie i Weryfikacja PDF (PyHanko) - BSK")
+        self.title("Podpisywanie i Weryfikacja PDF - BSK")
         self.geometry("650x600")
 
-        # Style
         style = ttk.Style(self)
         style.configure('TButton', padding=6); style.configure('TLabel', padding=2); style.configure('TEntry', padding=4)
         style.configure('Status.TLabel', font=('Helvetica', 10, 'italic'))
@@ -141,10 +135,6 @@ class SignVerifyApp(tk.Tk):
         ttk.Label(frame, text="Status operacji:").grid(row=row, column=0, sticky=tk.W, pady=(10, 2)); row += 1
         self.verify_status_label = ttk.Label(frame, text="-", style='Status.TLabel', width=70); self.verify_status_label.grid(row=row, column=0, columnspan=3, sticky=tk.W)
 
-    # ---------------------------------------------------------------
-    # TUTAJ ZACZYNAJĄ SIĘ DEFINICJE METOD sign_document i verify_signature
-    # MUSZĄ BYĆ WEWNĄTRZ KLASY (mieć wcięcie jak inne metody)
-    # ---------------------------------------------------------------
 
     def sign_document(self):
         """Logika podpisywania dokumentu z użyciem PyHanko (metoda PdfStamper)."""
@@ -157,12 +147,13 @@ class SignVerifyApp(tk.Tk):
         private_key = None
         try:
             self.set_status(self.sign_status_label, "Odczytywanie i deszyfrowanie klucza...", "info")
-            with open(key_file, 'rb') as f: nonce = f.read(crypto_utils.AES_NONCE_SIZE); tag = f.read(crypto_utils.AES_TAG_SIZE); encrypted_pem_only = f.read()
-            if len(nonce) != crypto_utils.AES_NONCE_SIZE or len(tag) != crypto_utils.AES_TAG_SIZE: self.set_status(self.sign_status_label, "BŁĄD: Plik klucza uszkodzony.", "error"); return
-            aes_key = crypto_utils.hash_pin(pin)
-            decrypted_pem = crypto_utils.decrypt_aes_gcm(nonce, tag, encrypted_pem_only, aes_key)
-            if decrypted_pem is None: self.set_status(self.sign_status_label, "BŁĄD: Deszyfrowanie nie powiodło się.", "error"); return
-            private_key = serialization.load_pem_private_key(decrypted_pem, password=None, backend=crypto_utils.default_backend())
+            with open(key_file, 'rb') as f:
+                pem_data = f.read()
+            private_key = crypto_utils.load_private_key_from_pem(pem_data, password=pin)
+            if private_key is None:
+                self.set_status(self.sign_status_label, "BŁĄD: Nie udało się załadować klucza. Sprawdź PIN lub format pliku.", "error")
+                return
+
             public_key = private_key.public_key()
             self.set_status(self.sign_status_label, "Klucz prywatny załadowany.", "info")
             self.set_status(self.sign_status_label, "Generowanie certyfikatu samopodpisanego...", "info")
@@ -198,7 +189,7 @@ class SignVerifyApp(tk.Tk):
             self.log_message(f"Znaleziono {len(r.embedded_signatures)} podpis(ów).")
             for ix, emb_sig in enumerate(r.embedded_signatures):
                  sig_name = emb_sig.field_name or f"Podpis #{ix+1}"; self.log_message(f"--- Weryfikacja: {sig_name} ---")
-                 try: # Sprawdzenie integralności
+                 try: 
                      integrity_info = emb_sig.compute_integrity_info()
                      if integrity_info.valid: self.log_message(f"[{sig_name}] Integralność: POPRAWNA"); validation_summary.append(f"{sig_name}: Integralność OK")
                      else: self.log_message(f"[{sig_name}] Integralność: BŁĘDNA ({integrity_info.modification_info})", "ERROR"); validation_summary.append(f"{sig_name}: INTEGRALNOŚĆ NARUSZONA!")
@@ -234,7 +225,6 @@ class SignVerifyApp(tk.Tk):
         except Exception as e:
             error_msg = f"BŁĄD KRYTYCZNY weryfikacji: {type(e).__name__} - {e}"; self.set_status(self.verify_status_label, error_msg, "error"); self.log_message(f"Szczegóły błędu: {e}", level="ERROR"); messagebox.showerror("Błąd Krytyczny", f"Wystąpił nieoczekiwany błąd:\n{e}")
 
-# --- Główny blok uruchomieniowy ---
 if __name__ == "__main__":
     if not PYHANKO_AVAILABLE: print("\nProszę zainstalować PyHanko i uruchomić aplikację ponownie.")
     app = SignVerifyApp()
