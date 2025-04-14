@@ -57,8 +57,6 @@ class SignVerifyApp(tk.Tk):
              self.log_message("PyHanko NIEDOSTĘPNE. Aplikacja ograniczona.", "ERROR")
              messagebox.showerror("Brak Biblioteki", "Biblioteka PyHanko nie jest zainstalowana.\nZainstaluj ją ('pip install pyhanko'), aby włączyć podpisywanie/weryfikację PDF.")
 
-    # --- METODY WEWNĄTRZ KLASY ---
-
     def _create_log_area(self):
         ttk.Label(self, text="Logi aplikacji:").pack(pady=(5,0))
         self.log_text = scrolledtext.ScrolledText(self, height=8, width=80, wrap=tk.WORD, state=tk.DISABLED)
