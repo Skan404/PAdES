@@ -1,25 +1,23 @@
-
-# crypto_utils.py (fragmenty do zmiany)
 import os
 import hashlib
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
-from cryptography.exceptions import InvalidSignature, InvalidTag # Upewnij się, że InvalidTag jest importowane
+from cryptography.exceptions import InvalidSignature, InvalidTag
 import datetime
 from cryptography import x509
 from cryptography.x509.oid import NameOID
-from cryptography.hazmat.primitives import hashes # Upewnij się, że jest
+from cryptography.hazmat.primitives import hashes
 
 
-# Stałe
 RSA_KEY_SIZE = 4096
-AES_KEY_SIZE = 256 # bits
-AES_NONCE_SIZE = 12 # bytes (standard for GCM)
-AES_TAG_SIZE = 16 # bytes (standard for GCM) # Dodano stałą dla rozmiaru tagu
+AES_KEY_SIZE = 256 # liczba bitów
+AES_NONCE_SIZE = 12
+AES_TAG_SIZE = 16
 HASH_ALGORITHM = hashes.SHA256()
 
+#generowanie kluczy RSA
 def generate_rsa_keys():
     """Generuje parę kluczy RSA 4096 bit."""
     private_key = rsa.generate_private_key(
@@ -30,6 +28,7 @@ def generate_rsa_keys():
     public_key = private_key.public_key()
     return private_key, public_key
 
+#serializacja do zapisu w pem
 def serialize_private_key(private_key, password=None):
     """Serializuje klucz prywatny do formatu PEM (opcjonalnie szyfrowany hasłem)."""
     pem = private_key.private_bytes(
@@ -57,8 +56,6 @@ def load_private_key_from_pem(pem_data, password=None):
         )
         return private_key
     except (ValueError, TypeError) as e:
-        # ValueError może wystąpić przy złym haśle lub formacie
-        # TypeError jeśli hasło jest wymagane a nie podane
         print(f"Błąd ładowania klucza prywatnego: {e}")
         return None
 
@@ -76,14 +73,16 @@ def load_public_key_from_pem(pem_data):
         return None
 
 
+#hashowanie PIN-u
+# Używamy SHA-256 do haszowania PIN-u, aby uzyskać 32 bajty (256 bitów)
 def hash_pin(pin):
     """Haszuje PIN używając SHA-256, zwraca 32 bajty (256 bitów)."""
-    # UWAGA: W realnym systemie użyj PBKDF2/bcrypt/Argon2 z solą!
     return hashlib.sha256(pin.encode('utf-8')).digest()
 
+# Szyfrowanie i deszyfrowanie AES-GCM
 def encrypt_aes_gcm(data, key):
     """Szyfruje dane używając AES-GCM z podanym kluczem (32 bajty).
-       Zwraca (nonce, tag, ciphertext_only).""" # Zmieniono zwracane wartości
+       Zwraca (nonce, tag, ciphertext_only)."""
     if len(key) * 8 != AES_KEY_SIZE:
         raise ValueError(f"Klucz AES musi mieć {AES_KEY_SIZE} bitów ({AES_KEY_SIZE//8} bajtów)")
 
@@ -91,11 +90,10 @@ def encrypt_aes_gcm(data, key):
     cipher = Cipher(algorithms.AES(key), modes.GCM(nonce), backend=default_backend())
     encryptor = cipher.encryptor()
     ciphertext_only = encryptor.update(data) + encryptor.finalize()
-    # Pobierz tag uwierzytelniający po finalizacji
     tag = encryptor.tag
-    return nonce, tag, ciphertext_only # Zwróć trzy elementy
+    return nonce, tag, ciphertext_only
 
-def decrypt_aes_gcm(nonce, tag, ciphertext_only, key): # Dodano parametr 'tag'
+def decrypt_aes_gcm(nonce, tag, ciphertext_only, key):
     """Deszyfruje dane używając AES-GCM. Wymaga nonce, tagu, ciphertextu i klucza.
        Zwraca odszyfrowane dane lub None przy błędzie."""
     if len(key) * 8 != AES_KEY_SIZE:
@@ -105,10 +103,8 @@ def decrypt_aes_gcm(nonce, tag, ciphertext_only, key): # Dodano parametr 'tag'
 
 
     try:
-        # Przekaż tag bezpośrednio do konstruktora GCM
         cipher = Cipher(algorithms.AES(key), modes.GCM(nonce, tag), backend=default_backend())
         decryptor = cipher.decryptor()
-        # Deszyfruj tylko właściwy ciphertext
         plaintext = decryptor.update(ciphertext_only) + decryptor.finalize()
         return plaintext
     except InvalidTag:
@@ -118,7 +114,7 @@ def decrypt_aes_gcm(nonce, tag, ciphertext_only, key): # Dodano parametr 'tag'
         print(f"Inny błąd deszyfrowania AES-GCM: {e}")
         return None
 
-
+# Haszowanie pliku - oblicza skrót pliku przy użyciu algorytmu SHA-256
 def hash_file(file_path):
     """Oblicza hash pliku używając HASH_ALGORITHM."""
     hasher = hashes.Hash(HASH_ALGORITHM, backend=default_backend())
@@ -170,13 +166,13 @@ def verify_rsa(public_key, signature, data_hash):
             ),
             HASH_ALGORITHM
         )
-        return True  # Podpis poprawny
+        return True # Podpis poprawny
     except InvalidSignature:
         print("Weryfikacja RSA: Podpis NIEPOPRAWNY.")
-        return False
+        return False # Podpis niepoprawny
     except Exception as e:
         print(f"Błąd podczas weryfikacji RSA: {e}")
-        return False
+        return False # Inny błąd
     
 
 def create_self_signed_cert(private_key, public_key, subject_name="PAdES Emulation User"):
@@ -190,24 +186,22 @@ def create_self_signed_cert(private_key, public_key, subject_name="PAdES Emulati
             x509.NameAttribute(NameOID.COMMON_NAME, subject_name),
         ])
 
-        # Certyfikat ważny od teraz przez 1 rok
+        # Certyfikat ważny przez 1 rok
         one_year = datetime.timedelta(days=365)
-        now = datetime.datetime.now(datetime.timezone.utc) # Poprawione na UTC
+        now = datetime.datetime.now(datetime.timezone.utc)
 
         builder = x509.CertificateBuilder()
         builder = builder.subject_name(subject)
         builder = builder.issuer_name(issuer)
         builder = builder.public_key(public_key)
-        # Numer seryjny - unikalny, tutaj używamy losowych bajtów
-        builder = builder.serial_number(x509.random_serial_number())
+    
+        builder = builder.serial_number(x509.random_serial_number()) # Numer seryjny - unikalny losowe bajty
         builder = builder.not_valid_before(now)
         builder = builder.not_valid_after(now + one_year)
 
-        # Dodaj podstawowe rozszerzenia
         builder = builder.add_extension(
             x509.BasicConstraints(ca=False, path_length=None), critical=True,
         )
-        # Można dodać KeyUsage, np. digital_signature
         builder = builder.add_extension(
             x509.KeyUsage(
                 digital_signature=True, key_encipherment=False, data_encipherment=False,

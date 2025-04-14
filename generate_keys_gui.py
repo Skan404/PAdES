@@ -10,7 +10,6 @@ class GenerateKeysApp(tk.Tk):
         self.title("Generator Kluczy BSK/SCS")
         self.geometry("500x450")
 
-        # Style
         style = ttk.Style(self)
         style.configure('TButton', padding=6)
         style.configure('TLabel', padding=2)
@@ -68,7 +67,7 @@ class GenerateKeysApp(tk.Tk):
         pin = self.pin_entry.get()
         selected_drive = self.drive_combobox.get()
 
-        # Walidacja danych wejściowych
+        # Walidacja pniu
         if len(pin) < 4:
             messagebox.showerror("Błąd", "PIN musi mieć co najmniej 4 znaki.")
             return
@@ -86,18 +85,10 @@ class GenerateKeysApp(tk.Tk):
             self.log_status("Klucze RSA wygenerowane pomyślnie.")
 
             # Serializacja kluczy
-            private_pem = crypto_utils.serialize_private_key(private_key)
+            self.log_status("Serializacja klucza prywatnego z szyfrowaniem PEM...")
+            private_pem = crypto_utils.serialize_private_key(private_key, password=pin)
             public_pem = crypto_utils.serialize_public_key(public_key)
             self.log_status("Klucze zserializowane do formatu PEM.")
-
-            # Szyfrowanie klucza prywatnego
-            self.log_status("Haszowanie PINu (SHA-256)...")
-            aes_key = crypto_utils.hash_pin(pin)
-            self.log_status(f"Klucz AES (hash PINu): {aes_key.hex()}") # debug
-
-            self.log_status("Szyfrowanie klucza prywatnego (AES-GCM)...")
-            nonce, tag, encrypted_private_pem_only = crypto_utils.encrypt_aes_gcm(private_pem, aes_key)
-            self.log_status("Klucz prywatny zaszyfrowany.")
 
 
             public_key_path = filedialog.asksaveasfilename(
@@ -108,26 +99,21 @@ class GenerateKeysApp(tk.Tk):
             # Sprawdzenie, czy użytkownik wybrał plik (nie anulował)
             if not public_key_path:
                 self.log_status("Anulowano zapis klucza publicznego.")
-                return # Użytkownik anulował, przerwij funkcję
+                return
 
             # Zapisanie pliku klucza publicznego
             with open(public_key_path, 'wb') as f_pub:
                 f_pub.write(public_pem)
             self.log_status(f"Klucz publiczny zapisany w: {public_key_path}")
 
-            # Zapis zaszyfrowanego klucza prywatnego na pendrive
+            # Zapis klucza prywatnego w standardowym formacie PEM na pendrive
             private_key_file_path = os.path.join(selected_drive, drive_utils.KEY_FILENAME)
-            self.log_status(f"Zapisywanie zaszyfrowanego klucza pryw. na: {private_key_file_path}")
-
-            # Zaktualizowany format pliku: [NONCE (12 bajtów)][TAG (16 bajtów)][ZASZYFROWANE DANE PEM]
+            self.log_status(f"Zapisywanie klucza prywatnego (PEM) na: {private_key_file_path}")
             with open(private_key_file_path, 'wb') as f_priv:
-                f_priv.write(nonce) # 12 bajtów
-                f_priv.write(tag)   # 16 bajtów (standardowy rozmiar tagu GCM)
-                f_priv.write(encrypted_private_pem_only) # Reszta danych
+                f_priv.write(private_pem)
 
             self.log_status("Operacja zakończona pomyślnie!")
-            # Teraz zmienna 'public_key_path' już istnieje i można jej bezpiecznie użyć
-            messagebox.showinfo("Sukces", f"Klucze wygenerowane.\nKlucz publiczny zapisany w: {public_key_path}\nZaszyfrowany klucz prywatny zapisany na pendrive: {private_key_file_path}")
+            messagebox.showinfo("Sukces", f"Klucze wygenerowane.\nKlucz publiczny zapisany w: {public_key_path}\nKlucz prywatny (PEM) zapisany na pendrive: {private_key_file_path}")
 
         except Exception as e:
             self.log_status(f"WYSTĄPIŁ BŁĄD: {e}")
