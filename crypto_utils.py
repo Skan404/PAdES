@@ -1,5 +1,7 @@
 import os
 import hashlib
+import base64
+import textwrap
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
@@ -8,14 +10,14 @@ from cryptography.exceptions import InvalidSignature, InvalidTag
 import datetime
 from cryptography import x509
 from cryptography.x509.oid import NameOID
-from cryptography.hazmat.primitives import hashes
-
 
 RSA_KEY_SIZE = 4096
-AES_KEY_SIZE = 256 # liczba bitów
+AES_KEY_SIZE = 256
 AES_NONCE_SIZE = 12
 AES_TAG_SIZE = 16
 HASH_ALGORITHM = hashes.SHA256()
+
+CUSTOM_PEM_TYPE = "AES-GCM ENCRYPTED PRIVATE KEY"
 
 #generowanie kluczy RSA
 def generate_rsa_keys():
@@ -34,7 +36,7 @@ def serialize_private_key(private_key, password=None):
     pem = private_key.private_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PrivateFormat.PKCS8,
-        encryption_algorithm=serialization.NoEncryption() if password is None else serialization.BestAvailableEncryption(password.encode('utf-8'))
+        encryption_algorithm=serialization.NoEncryption()
     )
     return pem
 
@@ -46,17 +48,17 @@ def serialize_public_key(public_key):
     )
     return pem
 
-def load_private_key_from_pem(pem_data, password=None):
-    """Wczytuje klucz prywatny z danych PEM."""
+def load_private_key_from_pem(pem_data):
+    """Wczytuje klucz prywatny z danych PEM (nieszyfrowanych)."""
     try:
         private_key = serialization.load_pem_private_key(
             pem_data,
-            password=password.encode('utf-8') if password else None,
+            password=None,
             backend=default_backend()
         )
         return private_key
-    except (ValueError, TypeError) as e:
-        print(f"Błąd ładowania klucza prywatnego: {e}")
+    except ValueError as e:
+        print(f"Błąd ładowania klucza prywatnego (PEM): {e}")
         return None
 
 
@@ -72,6 +74,45 @@ def load_public_key_from_pem(pem_data):
         print(f"Błąd ładowania klucza publicznego: {e}")
         return None
 
+def hash_pin(pin):
+    """Haszuje PIN używając SHA-256, zwraca 32 bajty (256 bitów) jako klucz AES."""
+    # UWAGA: Nadal zalecane byłoby użycie PBKDF2/bcrypt/Argon2 z solą w realnym systemie!
+    return hashlib.sha256(pin.encode('utf-8')).digest()
+
+def encrypt_aes_gcm(data, key):
+    """Szyfruje dane używając AES-GCM z podanym kluczem (pochodzącym z hasha PINu).
+       Zwraca (nonce, tag, ciphertext_only)."""
+    if len(key) * 8 != AES_KEY_SIZE:
+        raise ValueError(f"Klucz AES musi mieć {AES_KEY_SIZE} bitów ({AES_KEY_SIZE//8} bajtów)")
+
+    nonce = os.urandom(AES_NONCE_SIZE) # 12 bajtów nonce
+    cipher = Cipher(algorithms.AES(key), modes.GCM(nonce), backend=default_backend())
+    encryptor = cipher.encryptor()
+    ciphertext_only = encryptor.update(data) + encryptor.finalize()
+    tag = encryptor.tag
+    return nonce, tag, ciphertext_only
+
+def decrypt_aes_gcm(nonce, tag, ciphertext_only, key):
+    """Deszyfruje dane używając AES-GCM. Wymaga nonce, tagu, ciphertextu i klucza.
+       Zwraca odszyfrowane dane lub None przy błędzie."""
+    if len(key) * 8 != AES_KEY_SIZE:
+        raise ValueError(f"Klucz AES musi mieć {AES_KEY_SIZE} bitów ({AES_KEY_SIZE//8} bajtów)")
+    if len(tag) != AES_TAG_SIZE:
+         raise ValueError(f"Tag uwierzytelniający musi mieć {AES_TAG_SIZE} bajtów")
+    if len(nonce) != AES_NONCE_SIZE:
+         raise ValueError(f"Nonce musi mieć {AES_NONCE_SIZE} bajtów")
+
+    try:
+        cipher = Cipher(algorithms.AES(key), modes.GCM(nonce, tag), backend=default_backend())
+        decryptor = cipher.decryptor()
+        plaintext = decryptor.update(ciphertext_only) + decryptor.finalize()
+        return plaintext
+    except InvalidTag:
+        print("Błąd deszyfrowania AES-GCM: Nieprawidłowy tag (zły klucz/PIN lub dane uszkodzone)")
+        return None
+    except Exception as e:
+        print(f"Inny błąd deszyfrowania AES-GCM: {e}")
+        return None
 
 #hashowanie PIN-u
 # Używamy SHA-256 do haszowania PIN-u, aby uzyskać 32 bajty (256 bitów)
@@ -174,6 +215,31 @@ def verify_rsa(public_key, signature, data_hash):
         print(f"Błąd podczas weryfikacji RSA: {e}")
         return False # Inny błąd
     
+
+
+def wrap_binary_data_in_pem(binary_data, block_type=CUSTOM_PEM_TYPE):
+    """Opakowuje dane binarne w strukturę tekstową PEM z Base64."""
+    b64_data = base64.b64encode(binary_data)
+    b64_string = b64_data.decode('ascii')
+    # Opcjonalnie: połam linie co 64 znaki
+    wrapped_b64 = textwrap.fill(b64_string, 64)
+    return f"-----BEGIN {block_type}-----\n{wrapped_b64}\n-----END {block_type}-----\n"
+
+def unwrap_binary_data_from_pem(pem_string, block_type=CUSTOM_PEM_TYPE):
+    """Wyodrębnia dane binarne ze struktury tekstowej PEM."""
+    start_marker = f"-----BEGIN {block_type}-----"
+    end_marker = f"-----END {block_type}-----"
+
+    try:
+        start_index = pem_string.index(start_marker) + len(start_marker)
+        end_index = pem_string.index(end_marker)
+        # Pobierz zawartosc Base64 i usun biale znaki
+        b64_content = "".join(pem_string[start_index:end_index].split())
+        binary_data = base64.b64decode(b64_content)
+        return binary_data
+    except (ValueError, IndexError, base64.binascii.Error) as e:
+        print(f"Błąd podczas rozpakowywania danych PEM (typ: {block_type}): {e}")
+        return None
 
 def create_self_signed_cert(private_key, public_key, subject_name="PAdES Emulation User"):
         """Tworzy prosty samopodpisany certyfikat X.509 dla danej pary kluczy."""
