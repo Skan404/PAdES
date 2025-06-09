@@ -9,6 +9,7 @@ import datetime
 from cryptography import x509
 from cryptography.x509.oid import NameOID
 from cryptography.hazmat.primitives import hashes
+from pypdf import PdfReader
 
 
 RSA_KEY_SIZE = 4096
@@ -131,6 +132,22 @@ def hash_file(file_path):
         return None
     except Exception as e:
         print(f"Błąd podczas haszowania pliku {file_path}: {e}")
+        return None
+
+def hash_pdf_content(pdf_path):
+    """Oblicza skrót z treści stron pliku PDF, ignorując metadane."""
+    try:
+        reader = PdfReader(pdf_path)
+        digest = hashes.Hash(HASH_ALGORITHM, backend=default_backend())
+        for page in reader.pages:
+            # Pobieramy surowe bajty zawartości strony
+            digest.update(page.get_contents().get_data())
+        return digest.finalize()
+    except FileNotFoundError:
+        print(f"Błąd: Plik nie znaleziony - {pdf_path}")
+        return None
+    except Exception as e:
+        print(f"Błąd podczas haszowania zawartości PDF {pdf_path}: {e}")
         return None
 
 def sign_rsa(private_key, data_hash):

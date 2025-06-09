@@ -84,12 +84,21 @@ class GenerateKeysApp(tk.Tk):
             private_key, public_key = crypto_utils.generate_rsa_keys()
             self.log_status("Klucze RSA wygenerowane pomyślnie.")
 
-            # Serializacja kluczy
-            self.log_status("Serializacja klucza prywatnego z szyfrowaniem PEM...")
-            private_pem = crypto_utils.serialize_private_key(private_key, password=pin)
-            public_pem = crypto_utils.serialize_public_key(public_key)
-            self.log_status("Klucze zserializowane do formatu PEM.")
+            # KROK 1: Serializuj klucz prywatny do formatu PEM BEZ SZYFROWANIA
+            private_pem_bytes = crypto_utils.serialize_private_key(private_key, password=None)
+            
+            # KROK 2: Użyj hasha z PINu jako klucza AES
+            self.log_status("Tworzenie klucza AES z hasha PIN-u...")
+            aes_key = crypto_utils.hash_pin(pin)
 
+            # KROK 3: Zaszyfruj dane klucza prywatnego (PEM) za pomocą AES-GCM
+            self.log_status("Szyfrowanie klucza prywatnego algorytmem AES-GCM...")
+            nonce, tag, ciphertext = crypto_utils.encrypt_aes_gcm(private_pem_bytes, aes_key)
+            encrypted_private_key_data = nonce + tag + ciphertext
+            self.log_status("Klucz prywatny zaszyfrowany pomyślnie.")
+
+            # Serializacja klucza publicznego (bez zmian)
+            public_pem = crypto_utils.serialize_public_key(public_key)
 
             public_key_path = filedialog.asksaveasfilename(
                 title="Zapisz klucz publiczny jako...",
@@ -106,14 +115,14 @@ class GenerateKeysApp(tk.Tk):
                 f_pub.write(public_pem)
             self.log_status(f"Klucz publiczny zapisany w: {public_key_path}")
 
-            # Zapis klucza prywatnego w standardowym formacie PEM na pendrive
+            # Zapis zaszyfrowanego klucza prywatnego (.enc) na pendrive
             private_key_file_path = os.path.join(selected_drive, drive_utils.KEY_FILENAME)
-            self.log_status(f"Zapisywanie klucza prywatnego (PEM) na: {private_key_file_path}")
+            self.log_status(f"Zapisywanie zaszyfrowanego klucza prywatnego na: {private_key_file_path}")
             with open(private_key_file_path, 'wb') as f_priv:
-                f_priv.write(private_pem)
+                f_priv.write(encrypted_private_key_data)
 
             self.log_status("Operacja zakończona pomyślnie!")
-            messagebox.showinfo("Sukces", f"Klucze wygenerowane.\nKlucz publiczny zapisany w: {public_key_path}\nKlucz prywatny (PEM) zapisany na pendrive: {private_key_file_path}")
+            messagebox.showinfo("Sukces", f"Klucze wygenerowane.\nKlucz publiczny zapisany w: {public_key_path}\nZaszyfrowany klucz prywatny (AES) zapisany na pendrive jako: {private_key_file_path}")
 
         except Exception as e:
             self.log_status(f"WYSTĄPIŁ BŁĄD: {e}")
