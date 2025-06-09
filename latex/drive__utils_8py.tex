@@ -1,0 +1,56 @@
+\doxysection{drive\+\_\+utils.\+py File Reference}
+\hypertarget{drive__utils_8py}{}\label{drive__utils_8py}\index{drive\_utils.py@{drive\_utils.py}}
+
+
+Moduł pomocniczy do wykrywania pendrive\textquotesingle{}ów i lokalizacji pliku klucza.  
+
+
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{drive__utils_8py_a628fc132441c84eabc1416728f2cbbba}{drive\+\_\+utils.\+list\+\_\+removable\+\_\+drives}} ()
+\begin{DoxyCompactList}\small\item\em Zwraca listę ścieżek montowania dysków wymiennych (potencjalnych pendrive\textquotesingle{}ów). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{drive__utils_8py_a8c181517f5f5128554f493dfced9615a}{drive\+\_\+utils.\+find\+\_\+key\+\_\+on\+\_\+removable\+\_\+drives}} ()
+\begin{DoxyCompactList}\small\item\em Szuka pliku KEY\+\_\+\+FILENAME na wszystkich wymiennych dyskach. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{drive__utils_8py_a9113538155a10ac743c63d0bc43d2d71}\label{drive__utils_8py_a9113538155a10ac743c63d0bc43d2d71} 
+str {\bfseries drive\+\_\+utils.\+KEY\+\_\+\+FILENAME} = "{}private\+\_\+key.\+pem"{}
+\begin{DoxyCompactList}\small\item\em Nazwa pliku klucza prywatnego, którego szukamy na pendrive. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Moduł pomocniczy do wykrywania pendrive\textquotesingle{}ów i lokalizacji pliku klucza. 
+
+
+
+\label{doc-func-members}
+\Hypertarget{drive__utils_8py_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{drive__utils_8py_a8c181517f5f5128554f493dfced9615a}\index{drive\_utils.py@{drive\_utils.py}!find\_key\_on\_removable\_drives@{find\_key\_on\_removable\_drives}}
+\index{find\_key\_on\_removable\_drives@{find\_key\_on\_removable\_drives}!drive\_utils.py@{drive\_utils.py}}
+\doxysubsubsection{\texorpdfstring{find\_key\_on\_removable\_drives()}{find\_key\_on\_removable\_drives()}}
+{\footnotesize\ttfamily \label{drive__utils_8py_a8c181517f5f5128554f493dfced9615a} 
+drive\+\_\+utils.\+find\+\_\+key\+\_\+on\+\_\+removable\+\_\+drives (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Szuka pliku KEY\+\_\+\+FILENAME na wszystkich wymiennych dyskach. 
+
+\begin{DoxyReturn}{Returns}
+Pełna ścieżka do pierwszego znalezionego pliku lub None jeśli nie znaleziono. 
+\end{DoxyReturn}
+\Hypertarget{drive__utils_8py_a628fc132441c84eabc1416728f2cbbba}\index{drive\_utils.py@{drive\_utils.py}!list\_removable\_drives@{list\_removable\_drives}}
+\index{list\_removable\_drives@{list\_removable\_drives}!drive\_utils.py@{drive\_utils.py}}
+\doxysubsubsection{\texorpdfstring{list\_removable\_drives()}{list\_removable\_drives()}}
+{\footnotesize\ttfamily \label{drive__utils_8py_a628fc132441c84eabc1416728f2cbbba} 
+drive\+\_\+utils.\+list\+\_\+removable\+\_\+drives (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Zwraca listę ścieżek montowania dysków wymiennych (potencjalnych pendrive\textquotesingle{}ów). 
+
+\begin{DoxyReturn}{Returns}
+Lista ścieżek montowania (np. \mbox{[}\textquotesingle{}D\+:\textbackslash{}\textquotesingle{}, \textquotesingle{}E\+:\textbackslash{}\textquotesingle{}\mbox{]} na Windows lub \mbox{[}\textquotesingle{}/media/usb1\textquotesingle{}, \textquotesingle{}/media/usb2\textquotesingle{}\mbox{]} na Linux). 
+\end{DoxyReturn}

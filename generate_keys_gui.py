@@ -1,208 +1,146 @@
+## @file generate_keys_app.py
+## @brief Aplikacja GUI do generowania kluczy RSA i zapisywania zaszyfrowanego klucza prywatnego na pendrive dla projektu BSK.
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox, scrolledtext
 import os
-try:
-    import crypto_utils
-    import drive_utils
-except ImportError as e:
-    messagebox.showerror("Błąd importu", f"Nie można zaimportować modułów lub brak wymaganych funkcji: {e}\n")
-    exit()
-import traceback
+import crypto_utils
+import drive_utils
 
+
+## @class GenerateKeysApp
+## @brief Klasa aplikacji GUI do generowania kluczy RSA i zapisywania kluczy.
+## Pozwala użytkownikowi wygenerować parę kluczy RSA i zapisać:
+## - klucz publiczny do pliku PEM
+## - klucz prywatny (zaszyfrowany AES-GCM, klucz wyprowadzany z PIN-u) na pendrive.
 class GenerateKeysApp(tk.Tk):
+    ## @brief Inicjalizuje GUI aplikacji.
     def __init__(self):
         super().__init__()
-        self.title("Generator Kluczy BSK") 
-        self.geometry("550x500")
+        self.title("Generator Kluczy BSK/SCS")
+        self.geometry("500x450")
 
-        # Style
         style = ttk.Style(self)
-        style.configure('TButton', padding=6, font=('Helvetica', 10))
-        style.configure('TLabel', padding=2, font=('Helvetica', 10))
-        style.configure('TEntry', padding=4, font=('Helvetica', 10))
-        style.configure('TCombobox', padding=4, font=('Helvetica', 10))
-
-        # Ramka główna
-        main_frame = ttk.Frame(self, padding="10 10 10 10")
-        main_frame.pack(expand=True, fill=tk.BOTH)
+        style.configure('TButton', padding=6)
+        style.configure('TLabel', padding=2)
+        style.configure('TEntry', padding=4)
 
         # --- Elementy GUI ---
         # PIN
-        pin_label = ttk.Label(main_frame, text="Wprowadź PIN (min. 4 znaki):")
-        pin_label.grid(row=0, column=0, sticky=tk.W, pady=(0, 5))
-        self.pin_entry = ttk.Entry(main_frame, show="*", width=35)
-        self.pin_entry.grid(row=1, column=0, sticky=tk.EW, pady=(0, 10))
+        ttk.Label(self, text="Wprowadź PIN (min. 4 znaki):").pack(pady=(10,0))
+        self.pin_entry = ttk.Entry(self, show="*", width=30)
+        self.pin_entry.pack()
 
         # Wybór Pendrive'a
-        drive_label = ttk.Label(main_frame, text="Wybierz Pendrive docelowy:")
-        drive_label.grid(row=2, column=0, sticky=tk.W, pady=(0, 5))
-
-        drive_frame = ttk.Frame(main_frame)
-        drive_frame.grid(row=3, column=0, sticky=tk.EW, pady=(0, 10))
-
-        self.drive_combobox = ttk.Combobox(drive_frame, state="readonly", width=40)
-        self.drive_combobox.pack(side=tk.LEFT, expand=True, fill=tk.X, padx=(0, 5))
-
-        self.refresh_drives_button = ttk.Button(drive_frame, text="Odśwież", command=self.refresh_drive_list)
-        self.refresh_drives_button.pack(side=tk.LEFT)
+        ttk.Label(self, text="Wybierz Pendrive docelowy:").pack(pady=(10,0))
+        self.drive_combobox = ttk.Combobox(self, state="readonly", width=40)
+        self.drive_combobox.pack()
+        self.refresh_drives_button = ttk.Button(self, text="Odśwież listę dysków", command=self.refresh_drive_list)
+        self.refresh_drives_button.pack(pady=5)
 
         # Przycisk Generowania
-        self.generate_button = ttk.Button(main_frame, text="Generuj Klucze i Zapisz (Format PEM)", command=self.generate_and_save_keys) # Zmieniono tekst przycisku
-        self.generate_button.grid(row=4, column=0, pady=20)
+        self.generate_button = ttk.Button(self, text="Generuj Klucze i Zapisz", command=self.generate_and_save_keys)
+        self.generate_button.pack(pady=20)
 
         # Status/Logi
-        log_label = ttk.Label(main_frame, text="Status operacji:")
-        log_label.grid(row=5, column=0, sticky=tk.W, pady=(10, 5))
-        self.status_text = scrolledtext.ScrolledText(main_frame, height=10, width=60, wrap=tk.WORD, state=tk.DISABLED, font=('Courier New', 9))
-        self.status_text.grid(row=6, column=0, sticky=tk.NSEW)
-
-        # Konfiguracja rozciągania
-        main_frame.columnconfigure(0, weight=1)
-        main_frame.rowconfigure(6, weight=1)
+        ttk.Label(self, text="Status operacji:").pack()
+        self.status_text = scrolledtext.ScrolledText(self, height=10, width=60, wrap=tk.WORD, state=tk.DISABLED)
+        self.status_text.pack(padx=10, pady=5, expand=True, fill=tk.BOTH)
 
         # Inicjalizacja
         self.refresh_drive_list()
 
+    ## @brief Dodaje wiadomość do pola statusu.
+    ## @param message Tekst wiadomości do wyświetlenia.
     def log_status(self, message):
         """Dodaje wiadomość do pola statusu."""
-        try:
-            self.status_text.config(state=tk.NORMAL)
-            self.status_text.insert(tk.END, message + "\n")
-            self.status_text.see(tk.END)
-            self.status_text.config(state=tk.DISABLED)
-            self.update_idletasks()
-        except Exception as e:
-            print(f"Błąd logowania: {e}")
-
+        self.status_text.config(state=tk.NORMAL)
+        self.status_text.insert(tk.END, message + "\n")
+        self.status_text.see(tk.END)
+        self.status_text.config(state=tk.DISABLED)
+        self.update_idletasks() 
+        
+    ## @brief Odświeża listę dostępnych dysków wymiennych.
     def refresh_drive_list(self):
         """Odświeża listę dostępnych dysków wymiennych."""
         self.log_status("Odświeżanie listy dysków wymiennych...")
-        try:
-            drives = drive_utils.list_removable_drives()
-            if drives:
-                self.drive_combobox['values'] = drives
-                self.drive_combobox.current(0)
-                self.log_status(f"Znaleziono dyski: {', '.join(drives)}")
-            else:
-                self.drive_combobox['values'] = []
-                self.drive_combobox.set('')
-                self.log_status("Nie znaleziono żadnych dysków wymiennych.")
-        except Exception as e:
-            self.log_status(f"BŁĄD podczas odświeżania listy dysków: {e}")
-            messagebox.showerror("Błąd odświeżania", f"Wystąpił błąd podczas wyszukiwania dysków:\n{e}")
+        drives = drive_utils.list_removable_drives()
+        if drives:
+            self.drive_combobox['values'] = drives
+            self.drive_combobox.current(0)
+            self.log_status(f"Znaleziono dyski: {', '.join(drives)}")
+        else:
+            self.drive_combobox['values'] = []
+            self.drive_combobox.set('')
+            self.log_status("Nie znaleziono żadnych dysków wymiennych.")
 
-
+    ## @brief Generuje parę kluczy RSA, szyfruje klucz prywatny i zapisuje oba klucze.
     def generate_and_save_keys(self):
-        """Generuje klucze, szyfruje AES-GCM, OPAKOWUJE w pseudo-PEM i zapisuje."""
+        """Główna funkcja wywoływana po kliknięciu przycisku."""
         pin = self.pin_entry.get()
         selected_drive = self.drive_combobox.get()
 
-        # Walidacja danych wejsciowych
+        # Walidacja pniu
         if len(pin) < 4:
-            messagebox.showerror("Błąd Walidacji", "PIN musi mieć co najmniej 4 znaki.")
-            self.log_status("BŁĄD: PIN za krótki.")
+            messagebox.showerror("Błąd", "PIN musi mieć co najmniej 4 znaki.")
             return
         if not selected_drive:
-            messagebox.showerror("Błąd Walidacji", "Wybierz pendrive docelowy z listy.")
-            self.log_status("BŁĄD: Nie wybrano pendrive'a.")
+            messagebox.showerror("Błąd", "Wybierz pendrive docelowy z listy.")
             return
         if not os.path.isdir(selected_drive):
-            messagebox.showerror("Błąd Walidacji", f"Wybrana ścieżka '{selected_drive}' nie jest dostępnym katalogiem.\nOdśwież listę dysków.")
-            self.log_status(f"BŁĄD: Wybrana ścieżka '{selected_drive}' jest niedostępna.")
-            return
+             messagebox.showerror("Błąd", f"Wybrana ścieżka '{selected_drive}' nie jest dostępnym katalogiem. Odśwież listę.")
+             return
 
-        # logika generowania i zapisu
+        # Generowanie kluczy RSA
         try:
-            self.log_status(">>> Rozpoczynanie procesu generowania i zapisu kluczy (Format PEM) <<<")
-            self.generate_button.config(state=tk.DISABLED)
-            self.update_idletasks()
-
-            self.log_status("1. Generowanie pary kluczy RSA (4096 bit)...")
+            self.log_status("Rozpoczynanie generowania kluczy RSA (4096 bit)... Może to chwilę potrwać.")
             private_key, public_key = crypto_utils.generate_rsa_keys()
-            self.log_status("   Klucze RSA wygenerowane.")
+            self.log_status("Klucze RSA wygenerowane pomyślnie.")
 
-            # serializacjia i zapis klucza publicznego
-            self.log_status("2. Serializacja i zapis klucza publicznego...")
+            # KROK 1: Serializuj klucz prywatny do formatu PEM BEZ SZYFROWANIA
+            private_pem_bytes = crypto_utils.serialize_private_key(private_key, password=None)
+            
+            # KROK 2: Użyj hasha z PINu jako klucza AES
+            self.log_status("Tworzenie klucza AES z hasha PIN-u...")
+            aes_key = crypto_utils.hash_pin(pin)
+
+            # KROK 3: Zaszyfruj dane klucza prywatnego (PEM) za pomocą AES-GCM
+            self.log_status("Szyfrowanie klucza prywatnego algorytmem AES-GCM...")
+            nonce, tag, ciphertext = crypto_utils.encrypt_aes_gcm(private_pem_bytes, aes_key)
+            encrypted_private_key_data = nonce + tag + ciphertext
+            self.log_status("Klucz prywatny zaszyfrowany pomyślnie.")
+
+            # Serializacja klucza publicznego (bez zmian)
             public_pem = crypto_utils.serialize_public_key(public_key)
+
             public_key_path = filedialog.asksaveasfilename(
                 title="Zapisz klucz publiczny jako...",
                 defaultextension=".pem",
                 filetypes=[("PEM files", "*.pem"), ("All files", "*.*")]
             )
+            # Sprawdzenie, czy użytkownik wybrał plik (nie anulował)
             if not public_key_path:
-                self.log_status("Anulowano zapis klucza publicznego. Przerwano.")
-                self.generate_button.config(state=tk.NORMAL)
-                return
-            try:
-                with open(public_key_path, 'wb') as f_pub:
-                    f_pub.write(public_pem)
-                self.log_status(f"   Klucz publiczny zapisany w: {public_key_path}")
-            except Exception as e:
-                self.log_status(f"BŁĄD zapisu klucza publicznego: {e}")
-                messagebox.showerror("Błąd Zapisu", f"Nie można zapisać klucza publicznego w:\n{public_key_path}\nBłąd: {e}")
-                self.generate_button.config(state=tk.NORMAL)
+                self.log_status("Anulowano zapis klucza publicznego.")
                 return
 
-            # szyfrowanie i zapis klucza prywatnego
-            self.log_status("3. Serializacja klucza prywatnego (w pamięci)...")
-            private_pem_unencrypted = crypto_utils.serialize_private_key(private_key)
-            self.log_status("   Klucz prywatny zserializowany.")
+            # Zapisanie pliku klucza publicznego
+            with open(public_key_path, 'wb') as f_pub:
+                f_pub.write(public_pem)
+            self.log_status(f"Klucz publiczny zapisany w: {public_key_path}")
 
-            self.log_status("4. Haszowanie PINu (SHA-256) dla klucza AES...")
-            aes_key = crypto_utils.hash_pin(pin)
-            self.log_status("   Klucz AES wygenerowany.")
-
-            self.log_status("5. Szyfrowanie klucza prywatnego (AES-GCM)...")
-            nonce, tag, encrypted_private_pem_data = crypto_utils.encrypt_aes_gcm(
-                private_pem_unencrypted, aes_key
-            )
-            self.log_status("   Klucz prywatny zaszyfrowany (AES-GCM).")
-
-            # zaszyfrowane dane binarne w jeden blob
-            binary_blob = nonce + tag + encrypted_private_pem_data
-
-            # dane binarne w strukturę tekstową PEM
-            self.log_status("6. Opakowywanie zaszyfrowanych danych w format tekstowy PEM...")
-            pem_output_string = crypto_utils.wrap_binary_data_in_pem(binary_blob)
-            self.log_status("   Dane opakowane (Base64 + nagłówki).")
-
+            # Zapis zaszyfrowanego klucza prywatnego (.enc) na pendrive
             private_key_file_path = os.path.join(selected_drive, drive_utils.KEY_FILENAME)
-            self.log_status(f"7. Zapisywanie klucza prywatnego (Format PEM) na pendrive:")
-            self.log_status(f"   Ścieżka: {private_key_file_path}")
+            self.log_status(f"Zapisywanie zaszyfrowanego klucza prywatnego na: {private_key_file_path}")
+            with open(private_key_file_path, 'wb') as f_priv:
+                f_priv.write(encrypted_private_key_data)
 
-            # zapisujemy jako tekst w ascii
-            try:
-                with open(private_key_file_path, 'w', encoding='ascii') as f_priv:
-                    f_priv.write(pem_output_string)
-                self.log_status(f"   Zaszyfrowany klucz prywatny (format PEM) zapisany pomyślnie.")
-            except Exception as e:
-                self.log_status(f"BŁĄD podczas zapisu klucza prywatnego (format PEM) na pendrive: {e}")
-                messagebox.showerror("Błąd Zapisu", f"Nie można zapisać zaszyfrowanego klucza prywatnego (format PEM) na:\n{private_key_file_path}\nBłąd: {e}")
-                try:
-                    os.remove(public_key_path)
-                    self.log_status(f"   Usunięto zapisany wcześniej klucz publiczny z powodu błędu.")
-                except OSError as rm_err:
-                    self.log_status(f"   Nie udało się usunąć pliku klucza publicznego po błędzie: {rm_err}")
-                self.generate_button.config(state=tk.NORMAL)
-                return
+            self.log_status("Operacja zakończona pomyślnie!")
+            messagebox.showinfo("Sukces", f"Klucze wygenerowane.\nKlucz publiczny zapisany w: {public_key_path}\nZaszyfrowany klucz prywatny (AES) zapisany na pendrive jako: {private_key_file_path}")
 
-            self.log_status(">>> Operacja zakończona pomyślnie! <<<")
-            messagebox.showinfo("Sukces", f"Klucze wygenerowane i zapisane pomyślnie.\n\nKlucz publiczny:\n{public_key_path}\n\nZaszyfrowany klucz prywatny (format PEM):\n{private_key_file_path}")
-
-        except crypto_utils.ValueError as ve:
-            self.log_status(f"BŁĄD WARTOŚCI (crypto_utils): {ve}")
-            messagebox.showerror("Błąd Danych", f"Wystąpił błąd związany z danymi kryptograficznymi:\n{ve}")
         except Exception as e:
-            self.log_status(f"BŁĄD KRYTYCZNY: {e}")
-            self.log_status(traceback.format_exc())
-            messagebox.showerror("Błąd Krytyczny", f"Wystąpił nieoczekiwany błąd:\n{e}\n\nSprawdź logi aplikacji po szczegóły.")
-        finally:
-            self.generate_button.config(state=tk.NORMAL)
+            self.log_status(f"WYSTĄPIŁ BŁĄD: {e}")
+            messagebox.showerror("Błąd Krytyczny", f"Wystąpił nieoczekiwany błąd:\n{e}")
+
 
 if __name__ == "__main__":
-    try:
-        app = GenerateKeysApp()
-        app.mainloop()
-    except Exception as start_error:
-        print(f"Błąd krytyczny podczas uruchamiania aplikacji: {start_error}")
-        messagebox.showerror("Błąd Uruchomienia", f"Nie można uruchomić aplikacji:\n{start_error}")
+    app = GenerateKeysApp()
+    app.mainloop()

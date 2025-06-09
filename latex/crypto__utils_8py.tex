@@ -1,0 +1,379 @@
+\doxysection{crypto\+\_\+utils.\+py File Reference}
+\hypertarget{crypto__utils_8py}{}\label{crypto__utils_8py}\index{crypto\_utils.py@{crypto\_utils.py}}
+
+
+Moduł narzędziowy do obsługi kryptografii dla projektu PAd\+ES.  
+
+
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{crypto__utils_8py_a753b9e6301a4400227e3125f4c1acc6c}{crypto\+\_\+utils.\+generate\+\_\+rsa\+\_\+keys}} ()
+\begin{DoxyCompactList}\small\item\em Generuje parę kluczy RSA 4096 bit. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{crypto__utils_8py_a3ec3b95c5535fdedc003e73b1127d346}{crypto\+\_\+utils.\+serialize\+\_\+private\+\_\+key}} (private\+\_\+key, password=None)
+\begin{DoxyCompactList}\small\item\em Serializuje klucz prywatny do formatu PEM (opcjonalnie szyfrowany hasłem). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{crypto__utils_8py_ac76737778ce924c1ba0723e418016084}{crypto\+\_\+utils.\+serialize\+\_\+public\+\_\+key}} (public\+\_\+key)
+\begin{DoxyCompactList}\small\item\em Serializuje klucz publiczny do formatu PEM. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{crypto__utils_8py_adb4b2e4a7584872debd9b74a97b959ea}{crypto\+\_\+utils.\+load\+\_\+private\+\_\+key\+\_\+from\+\_\+pem}} (pem\+\_\+data, password=None)
+\begin{DoxyCompactList}\small\item\em Wczytuje klucz prywatny z danych PEM. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{crypto__utils_8py_a18c9a758ce4ae9a223c5c05a31f019a6}{crypto\+\_\+utils.\+load\+\_\+public\+\_\+key\+\_\+from\+\_\+pem}} (pem\+\_\+data)
+\begin{DoxyCompactList}\small\item\em Wczytuje klucz publiczny z danych PEM. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{crypto__utils_8py_a4be20cc29c4c1a4ccaa77eeeeb1ba3af}{crypto\+\_\+utils.\+hash\+\_\+pin}} (pin)
+\begin{DoxyCompactList}\small\item\em Haszuje PIN używając SHA-\/256. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{crypto__utils_8py_a8c9ba0275d79fec58511147df21eae18}{crypto\+\_\+utils.\+encrypt\+\_\+aes\+\_\+gcm}} (data, key)
+\begin{DoxyCompactList}\small\item\em Szyfruje dane używając AES-\/\+GCM. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{crypto__utils_8py_ae6b2de6a4f1ebdd33f243f1f6e7942a0}{crypto\+\_\+utils.\+decrypt\+\_\+aes\+\_\+gcm}} (nonce, tag, ciphertext\+\_\+only, key)
+\begin{DoxyCompactList}\small\item\em Deszyfruje dane używając AES-\/\+GCM. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{crypto__utils_8py_a9dfad751a50aaa7ce4deb1165ea746e4}{crypto\+\_\+utils.\+hash\+\_\+file}} (file\+\_\+path)
+\begin{DoxyCompactList}\small\item\em Oblicza hash pliku używając SHA-\/256. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{crypto__utils_8py_a97fc039f5c31b1491d5efcc897677535}{crypto\+\_\+utils.\+hash\+\_\+pdf\+\_\+content}} (pdf\+\_\+path)
+\begin{DoxyCompactList}\small\item\em Oblicza hash zawartości PDF (bez metadanych). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{crypto__utils_8py_a605fbce7ad7c7c6332b01e46ffc80dc2}{crypto\+\_\+utils.\+sign\+\_\+rsa}} (private\+\_\+key, data\+\_\+hash)
+\begin{DoxyCompactList}\small\item\em Podpisuje hash danych używając RSA i PSS padding. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{crypto__utils_8py_a5b2ce10c6063b820fc87d39df19de40c}{crypto\+\_\+utils.\+verify\+\_\+rsa}} (public\+\_\+key, signature, data\+\_\+hash)
+\begin{DoxyCompactList}\small\item\em Weryfikuje podpis RSA. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{crypto__utils_8py_abc59def08bea83636646fe1c38510bae}{crypto\+\_\+utils.\+create\+\_\+self\+\_\+signed\+\_\+cert}} (private\+\_\+key, public\+\_\+key, subject\+\_\+name="{}PAd\+ES Emulation User"{})
+\begin{DoxyCompactList}\small\item\em Tworzy samopodpisany certyfikat X.\+509. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{crypto__utils_8py_a6f12e27408f0ef51ca8369a9d0587dbb}{crypto\+\_\+utils.\+serialize\+\_\+certificate}} (certificate)
+\begin{DoxyCompactList}\small\item\em Serializuje certyfikat do formatu PEM. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{crypto__utils_8py_a9046efb3f503f67c83cc31af0f48d9a8}{crypto\+\_\+utils.\+load\+\_\+certificate\+\_\+from\+\_\+pem}} (pem\+\_\+data)
+\begin{DoxyCompactList}\small\item\em Wczytuje certyfikat z danych PEM. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{crypto__utils_8py_a9c894025c66c958bc74c04656fd01040}{crypto\+\_\+utils.\+RSA\+\_\+\+KEY\+\_\+\+SIZE}} = 4096
+\begin{DoxyCompactList}\small\item\em Rozmiar klucza RSA w bitach. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{crypto__utils_8py_a53d6c3db357545c2a90c9ae1608a5559}{crypto\+\_\+utils.\+AES\+\_\+\+KEY\+\_\+\+SIZE}} = 256
+\begin{DoxyCompactList}\small\item\em Rozmiar klucza AES w bitach (256 = AES-\/256). \end{DoxyCompactList}\item 
+\Hypertarget{crypto__utils_8py_a39814021c8ec9e6c0664485583f5b999}\label{crypto__utils_8py_a39814021c8ec9e6c0664485583f5b999} 
+int {\bfseries crypto\+\_\+utils.\+AES\+\_\+\+NONCE\+\_\+\+SIZE} = 12
+\begin{DoxyCompactList}\small\item\em Rozmiar nonce (liczba bajtów) dla trybu AES-\/\+GCM. \end{DoxyCompactList}\item 
+\Hypertarget{crypto__utils_8py_aaafd9a5e0ec37521e20bc261c28efbca}\label{crypto__utils_8py_aaafd9a5e0ec37521e20bc261c28efbca} 
+int {\bfseries crypto\+\_\+utils.\+AES\+\_\+\+TAG\+\_\+\+SIZE} = 16
+\begin{DoxyCompactList}\small\item\em Rozmiar tagu uwierzytelniającego (liczba bajtów) dla trybu AES-\/\+GCM. \end{DoxyCompactList}\item 
+\Hypertarget{crypto__utils_8py_a29b7fce1cbb63d46ba28971b8efd717e}\label{crypto__utils_8py_a29b7fce1cbb63d46ba28971b8efd717e} 
+{\bfseries crypto\+\_\+utils.\+HASH\+\_\+\+ALGORITHM} = hashes.\+SHA256()
+\begin{DoxyCompactList}\small\item\em Algorytm haszowania używany w całym projekcie (SHA-\/256). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Moduł narzędziowy do obsługi kryptografii dla projektu PAd\+ES. 
+
+
+
+\label{doc-func-members}
+\Hypertarget{crypto__utils_8py_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{crypto__utils_8py_abc59def08bea83636646fe1c38510bae}\index{crypto\_utils.py@{crypto\_utils.py}!create\_self\_signed\_cert@{create\_self\_signed\_cert}}
+\index{create\_self\_signed\_cert@{create\_self\_signed\_cert}!crypto\_utils.py@{crypto\_utils.py}}
+\doxysubsubsection{\texorpdfstring{create\_self\_signed\_cert()}{create\_self\_signed\_cert()}}
+{\footnotesize\ttfamily \label{crypto__utils_8py_abc59def08bea83636646fe1c38510bae} 
+crypto\+\_\+utils.\+create\+\_\+self\+\_\+signed\+\_\+cert (\begin{DoxyParamCaption}\item[{}]{private\+\_\+key}{, }\item[{}]{public\+\_\+key}{, }\item[{}]{subject\+\_\+name}{ = {\ttfamily "{}PAdES~Emulation~User"{}}}\end{DoxyParamCaption})}
+
+
+
+Tworzy samopodpisany certyfikat X.\+509. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em private\+\_\+key} & Klucz prywatny RSA. \\
+\hline
+{\em public\+\_\+key} & Klucz publiczny RSA. \\
+\hline
+{\em subject\+\_\+name} & Nazwa subskrybenta certyfikatu. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Certyfikat X.\+509. 
+\end{DoxyReturn}
+\Hypertarget{crypto__utils_8py_ae6b2de6a4f1ebdd33f243f1f6e7942a0}\index{crypto\_utils.py@{crypto\_utils.py}!decrypt\_aes\_gcm@{decrypt\_aes\_gcm}}
+\index{decrypt\_aes\_gcm@{decrypt\_aes\_gcm}!crypto\_utils.py@{crypto\_utils.py}}
+\doxysubsubsection{\texorpdfstring{decrypt\_aes\_gcm()}{decrypt\_aes\_gcm()}}
+{\footnotesize\ttfamily \label{crypto__utils_8py_ae6b2de6a4f1ebdd33f243f1f6e7942a0} 
+crypto\+\_\+utils.\+decrypt\+\_\+aes\+\_\+gcm (\begin{DoxyParamCaption}\item[{}]{nonce}{, }\item[{}]{tag}{, }\item[{}]{ciphertext\+\_\+only}{, }\item[{}]{key}{}\end{DoxyParamCaption})}
+
+
+
+Deszyfruje dane używając AES-\/\+GCM. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em nonce} & Nonce AES-\/\+GCM. \\
+\hline
+{\em tag} & Tag uwierzytelniający. \\
+\hline
+{\em ciphertext\+\_\+only} & Zaszyfrowane dane. \\
+\hline
+{\em key} & Klucz AES (32 bajty). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Odszyfrowane dane lub None przy błędzie. 
+\end{DoxyReturn}
+\Hypertarget{crypto__utils_8py_a8c9ba0275d79fec58511147df21eae18}\index{crypto\_utils.py@{crypto\_utils.py}!encrypt\_aes\_gcm@{encrypt\_aes\_gcm}}
+\index{encrypt\_aes\_gcm@{encrypt\_aes\_gcm}!crypto\_utils.py@{crypto\_utils.py}}
+\doxysubsubsection{\texorpdfstring{encrypt\_aes\_gcm()}{encrypt\_aes\_gcm()}}
+{\footnotesize\ttfamily \label{crypto__utils_8py_a8c9ba0275d79fec58511147df21eae18} 
+crypto\+\_\+utils.\+encrypt\+\_\+aes\+\_\+gcm (\begin{DoxyParamCaption}\item[{}]{data}{, }\item[{}]{key}{}\end{DoxyParamCaption})}
+
+
+
+Szyfruje dane używając AES-\/\+GCM. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dane do zaszyfrowania. \\
+\hline
+{\em key} & Klucz AES (32 bajty). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+nonce, tag, ciphertext\+\_\+only 
+\end{DoxyReturn}
+\Hypertarget{crypto__utils_8py_a753b9e6301a4400227e3125f4c1acc6c}\index{crypto\_utils.py@{crypto\_utils.py}!generate\_rsa\_keys@{generate\_rsa\_keys}}
+\index{generate\_rsa\_keys@{generate\_rsa\_keys}!crypto\_utils.py@{crypto\_utils.py}}
+\doxysubsubsection{\texorpdfstring{generate\_rsa\_keys()}{generate\_rsa\_keys()}}
+{\footnotesize\ttfamily \label{crypto__utils_8py_a753b9e6301a4400227e3125f4c1acc6c} 
+crypto\+\_\+utils.\+generate\+\_\+rsa\+\_\+keys (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Generuje parę kluczy RSA 4096 bit. 
+
+\begin{DoxyReturn}{Returns}
+private\+\_\+key, public\+\_\+key 
+\end{DoxyReturn}
+\Hypertarget{crypto__utils_8py_a9dfad751a50aaa7ce4deb1165ea746e4}\index{crypto\_utils.py@{crypto\_utils.py}!hash\_file@{hash\_file}}
+\index{hash\_file@{hash\_file}!crypto\_utils.py@{crypto\_utils.py}}
+\doxysubsubsection{\texorpdfstring{hash\_file()}{hash\_file()}}
+{\footnotesize\ttfamily \label{crypto__utils_8py_a9dfad751a50aaa7ce4deb1165ea746e4} 
+crypto\+\_\+utils.\+hash\+\_\+file (\begin{DoxyParamCaption}\item[{}]{file\+\_\+path}{}\end{DoxyParamCaption})}
+
+
+
+Oblicza hash pliku używając SHA-\/256. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em file\+\_\+path} & Ścieżka do pliku. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Hash pliku jako bytes. 
+\end{DoxyReturn}
+\Hypertarget{crypto__utils_8py_a97fc039f5c31b1491d5efcc897677535}\index{crypto\_utils.py@{crypto\_utils.py}!hash\_pdf\_content@{hash\_pdf\_content}}
+\index{hash\_pdf\_content@{hash\_pdf\_content}!crypto\_utils.py@{crypto\_utils.py}}
+\doxysubsubsection{\texorpdfstring{hash\_pdf\_content()}{hash\_pdf\_content()}}
+{\footnotesize\ttfamily \label{crypto__utils_8py_a97fc039f5c31b1491d5efcc897677535} 
+crypto\+\_\+utils.\+hash\+\_\+pdf\+\_\+content (\begin{DoxyParamCaption}\item[{}]{pdf\+\_\+path}{}\end{DoxyParamCaption})}
+
+
+
+Oblicza hash zawartości PDF (bez metadanych). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em pdf\+\_\+path} & Ścieżka do pliku PDF. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Hash zawartości PDF jako bytes. 
+\end{DoxyReturn}
+\Hypertarget{crypto__utils_8py_a4be20cc29c4c1a4ccaa77eeeeb1ba3af}\index{crypto\_utils.py@{crypto\_utils.py}!hash\_pin@{hash\_pin}}
+\index{hash\_pin@{hash\_pin}!crypto\_utils.py@{crypto\_utils.py}}
+\doxysubsubsection{\texorpdfstring{hash\_pin()}{hash\_pin()}}
+{\footnotesize\ttfamily \label{crypto__utils_8py_a4be20cc29c4c1a4ccaa77eeeeb1ba3af} 
+crypto\+\_\+utils.\+hash\+\_\+pin (\begin{DoxyParamCaption}\item[{}]{pin}{}\end{DoxyParamCaption})}
+
+
+
+Haszuje PIN używając SHA-\/256. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em pin} & PIN użytkownika jako string. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Hash PIN-\/u (32 bajty). 
+\end{DoxyReturn}
+\Hypertarget{crypto__utils_8py_a9046efb3f503f67c83cc31af0f48d9a8}\index{crypto\_utils.py@{crypto\_utils.py}!load\_certificate\_from\_pem@{load\_certificate\_from\_pem}}
+\index{load\_certificate\_from\_pem@{load\_certificate\_from\_pem}!crypto\_utils.py@{crypto\_utils.py}}
+\doxysubsubsection{\texorpdfstring{load\_certificate\_from\_pem()}{load\_certificate\_from\_pem()}}
+{\footnotesize\ttfamily \label{crypto__utils_8py_a9046efb3f503f67c83cc31af0f48d9a8} 
+crypto\+\_\+utils.\+load\+\_\+certificate\+\_\+from\+\_\+pem (\begin{DoxyParamCaption}\item[{}]{pem\+\_\+data}{}\end{DoxyParamCaption})}
+
+
+
+Wczytuje certyfikat z danych PEM. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em pem\+\_\+data} & Dane PEM. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Certyfikat X.\+509 lub None przy błędzie. 
+\end{DoxyReturn}
+\Hypertarget{crypto__utils_8py_adb4b2e4a7584872debd9b74a97b959ea}\index{crypto\_utils.py@{crypto\_utils.py}!load\_private\_key\_from\_pem@{load\_private\_key\_from\_pem}}
+\index{load\_private\_key\_from\_pem@{load\_private\_key\_from\_pem}!crypto\_utils.py@{crypto\_utils.py}}
+\doxysubsubsection{\texorpdfstring{load\_private\_key\_from\_pem()}{load\_private\_key\_from\_pem()}}
+{\footnotesize\ttfamily \label{crypto__utils_8py_adb4b2e4a7584872debd9b74a97b959ea} 
+crypto\+\_\+utils.\+load\+\_\+private\+\_\+key\+\_\+from\+\_\+pem (\begin{DoxyParamCaption}\item[{}]{pem\+\_\+data}{, }\item[{}]{password}{ = {\ttfamily None}}\end{DoxyParamCaption})}
+
+
+
+Wczytuje klucz prywatny z danych PEM. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em pem\+\_\+data} & Dane PEM. \\
+\hline
+{\em password} & Hasło do PEM (opcjonalnie). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Klucz prywatny RSA lub None przy błędzie. 
+\end{DoxyReturn}
+\Hypertarget{crypto__utils_8py_a18c9a758ce4ae9a223c5c05a31f019a6}\index{crypto\_utils.py@{crypto\_utils.py}!load\_public\_key\_from\_pem@{load\_public\_key\_from\_pem}}
+\index{load\_public\_key\_from\_pem@{load\_public\_key\_from\_pem}!crypto\_utils.py@{crypto\_utils.py}}
+\doxysubsubsection{\texorpdfstring{load\_public\_key\_from\_pem()}{load\_public\_key\_from\_pem()}}
+{\footnotesize\ttfamily \label{crypto__utils_8py_a18c9a758ce4ae9a223c5c05a31f019a6} 
+crypto\+\_\+utils.\+load\+\_\+public\+\_\+key\+\_\+from\+\_\+pem (\begin{DoxyParamCaption}\item[{}]{pem\+\_\+data}{}\end{DoxyParamCaption})}
+
+
+
+Wczytuje klucz publiczny z danych PEM. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em pem\+\_\+data} & Dane PEM. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Klucz publiczny RSA lub None przy błędzie. 
+\end{DoxyReturn}
+\Hypertarget{crypto__utils_8py_a6f12e27408f0ef51ca8369a9d0587dbb}\index{crypto\_utils.py@{crypto\_utils.py}!serialize\_certificate@{serialize\_certificate}}
+\index{serialize\_certificate@{serialize\_certificate}!crypto\_utils.py@{crypto\_utils.py}}
+\doxysubsubsection{\texorpdfstring{serialize\_certificate()}{serialize\_certificate()}}
+{\footnotesize\ttfamily \label{crypto__utils_8py_a6f12e27408f0ef51ca8369a9d0587dbb} 
+crypto\+\_\+utils.\+serialize\+\_\+certificate (\begin{DoxyParamCaption}\item[{}]{certificate}{}\end{DoxyParamCaption})}
+
+
+
+Serializuje certyfikat do formatu PEM. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em certificate} & Certyfikat X.\+509. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Certyfikat w formacie PEM. 
+\end{DoxyReturn}
+\Hypertarget{crypto__utils_8py_a3ec3b95c5535fdedc003e73b1127d346}\index{crypto\_utils.py@{crypto\_utils.py}!serialize\_private\_key@{serialize\_private\_key}}
+\index{serialize\_private\_key@{serialize\_private\_key}!crypto\_utils.py@{crypto\_utils.py}}
+\doxysubsubsection{\texorpdfstring{serialize\_private\_key()}{serialize\_private\_key()}}
+{\footnotesize\ttfamily \label{crypto__utils_8py_a3ec3b95c5535fdedc003e73b1127d346} 
+crypto\+\_\+utils.\+serialize\+\_\+private\+\_\+key (\begin{DoxyParamCaption}\item[{}]{private\+\_\+key}{, }\item[{}]{password}{ = {\ttfamily None}}\end{DoxyParamCaption})}
+
+
+
+Serializuje klucz prywatny do formatu PEM (opcjonalnie szyfrowany hasłem). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em private\+\_\+key} & Klucz prywatny RSA. \\
+\hline
+{\em password} & Opcjonalne hasło do szyfrowania PEM. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+PEM jako bytes. 
+\end{DoxyReturn}
+\Hypertarget{crypto__utils_8py_ac76737778ce924c1ba0723e418016084}\index{crypto\_utils.py@{crypto\_utils.py}!serialize\_public\_key@{serialize\_public\_key}}
+\index{serialize\_public\_key@{serialize\_public\_key}!crypto\_utils.py@{crypto\_utils.py}}
+\doxysubsubsection{\texorpdfstring{serialize\_public\_key()}{serialize\_public\_key()}}
+{\footnotesize\ttfamily \label{crypto__utils_8py_ac76737778ce924c1ba0723e418016084} 
+crypto\+\_\+utils.\+serialize\+\_\+public\+\_\+key (\begin{DoxyParamCaption}\item[{}]{public\+\_\+key}{}\end{DoxyParamCaption})}
+
+
+
+Serializuje klucz publiczny do formatu PEM. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em public\+\_\+key} & Klucz publiczny RSA. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+PEM jako bytes. 
+\end{DoxyReturn}
+\Hypertarget{crypto__utils_8py_a605fbce7ad7c7c6332b01e46ffc80dc2}\index{crypto\_utils.py@{crypto\_utils.py}!sign\_rsa@{sign\_rsa}}
+\index{sign\_rsa@{sign\_rsa}!crypto\_utils.py@{crypto\_utils.py}}
+\doxysubsubsection{\texorpdfstring{sign\_rsa()}{sign\_rsa()}}
+{\footnotesize\ttfamily \label{crypto__utils_8py_a605fbce7ad7c7c6332b01e46ffc80dc2} 
+crypto\+\_\+utils.\+sign\+\_\+rsa (\begin{DoxyParamCaption}\item[{}]{private\+\_\+key}{, }\item[{}]{data\+\_\+hash}{}\end{DoxyParamCaption})}
+
+
+
+Podpisuje hash danych używając RSA i PSS padding. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em private\+\_\+key} & Klucz prywatny RSA. \\
+\hline
+{\em data\+\_\+hash} & Hash danych do podpisania. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Podpis (bytes) lub None przy błędzie. 
+\end{DoxyReturn}
+\Hypertarget{crypto__utils_8py_a5b2ce10c6063b820fc87d39df19de40c}\index{crypto\_utils.py@{crypto\_utils.py}!verify\_rsa@{verify\_rsa}}
+\index{verify\_rsa@{verify\_rsa}!crypto\_utils.py@{crypto\_utils.py}}
+\doxysubsubsection{\texorpdfstring{verify\_rsa()}{verify\_rsa()}}
+{\footnotesize\ttfamily \label{crypto__utils_8py_a5b2ce10c6063b820fc87d39df19de40c} 
+crypto\+\_\+utils.\+verify\+\_\+rsa (\begin{DoxyParamCaption}\item[{}]{public\+\_\+key}{, }\item[{}]{signature}{, }\item[{}]{data\+\_\+hash}{}\end{DoxyParamCaption})}
+
+
+
+Weryfikuje podpis RSA. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em public\+\_\+key} & Klucz publiczny RSA. \\
+\hline
+{\em signature} & Podpis RSA. \\
+\hline
+{\em data\+\_\+hash} & Hash podpisanych danych. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True jeśli poprawny podpis, False w przeciwnym razie. 
+\end{DoxyReturn}
+
+
+\label{doc-var-members}
+\Hypertarget{crypto__utils_8py_doc-var-members}
+\doxysubsection{Variable Documentation}
+\Hypertarget{crypto__utils_8py_a53d6c3db357545c2a90c9ae1608a5559}\index{crypto\_utils.py@{crypto\_utils.py}!AES\_KEY\_SIZE@{AES\_KEY\_SIZE}}
+\index{AES\_KEY\_SIZE@{AES\_KEY\_SIZE}!crypto\_utils.py@{crypto\_utils.py}}
+\doxysubsubsection{\texorpdfstring{AES\_KEY\_SIZE}{AES\_KEY\_SIZE}}
+{\footnotesize\ttfamily \label{crypto__utils_8py_a53d6c3db357545c2a90c9ae1608a5559} 
+int crypto\+\_\+utils.\+AES\+\_\+\+KEY\+\_\+\+SIZE = 256}
+
+
+
+Rozmiar klucza AES w bitach (256 = AES-\/256). 
+
+Używany do szyfrowania klucza prywatnego. \Hypertarget{crypto__utils_8py_a9c894025c66c958bc74c04656fd01040}\index{crypto\_utils.py@{crypto\_utils.py}!RSA\_KEY\_SIZE@{RSA\_KEY\_SIZE}}
+\index{RSA\_KEY\_SIZE@{RSA\_KEY\_SIZE}!crypto\_utils.py@{crypto\_utils.py}}
+\doxysubsubsection{\texorpdfstring{RSA\_KEY\_SIZE}{RSA\_KEY\_SIZE}}
+{\footnotesize\ttfamily \label{crypto__utils_8py_a9c894025c66c958bc74c04656fd01040} 
+int crypto\+\_\+utils.\+RSA\+\_\+\+KEY\+\_\+\+SIZE = 4096}
+
+
+
+Rozmiar klucza RSA w bitach. 
+
+Używany do generacji klucza RSA. 

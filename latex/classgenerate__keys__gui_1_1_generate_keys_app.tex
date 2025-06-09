@@ -1,0 +1,100 @@
+\doxysection{generate\+\_\+keys\+\_\+gui.\+Generate\+Keys\+App Class Reference}
+\hypertarget{classgenerate__keys__gui_1_1_generate_keys_app}{}\label{classgenerate__keys__gui_1_1_generate_keys_app}\index{generate\_keys\_gui.GenerateKeysApp@{generate\_keys\_gui.GenerateKeysApp}}
+
+
+Klasa aplikacji GUI do generowania kluczy RSA i zapisywania kluczy.  
+
+
+Inheritance diagram for generate\+\_\+keys\+\_\+gui.\+Generate\+Keys\+App\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classgenerate__keys__gui_1_1_generate_keys_app}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classgenerate__keys__gui_1_1_generate_keys_app_a070797b6a62e8803b41f2e1add03c5e0}\label{classgenerate__keys__gui_1_1_generate_keys_app_a070797b6a62e8803b41f2e1add03c5e0} 
+{\bfseries \+\_\+\+\_\+init\+\_\+\+\_\+} (self)
+\begin{DoxyCompactList}\small\item\em Inicjalizuje GUI aplikacji. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classgenerate__keys__gui_1_1_generate_keys_app_a5eb0c8f285ff95ee8c6877d74cd1002f}{log\+\_\+status}} (self, message)
+\begin{DoxyCompactList}\small\item\em Dodaje wiadomość do pola statusu. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classgenerate__keys__gui_1_1_generate_keys_app_a5e7d9c56d9fe65655ee4084fa8925b49}{refresh\+\_\+drive\+\_\+list}} (self)
+\begin{DoxyCompactList}\small\item\em Odświeża listę dostępnych dysków wymiennych. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classgenerate__keys__gui_1_1_generate_keys_app_a378705d549eaa02b8b1d748b8c8479e4}{generate\+\_\+and\+\_\+save\+\_\+keys}} (self)
+\begin{DoxyCompactList}\small\item\em Generuje parę kluczy RSA, szyfruje klucz prywatny i zapisuje oba klucze. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classgenerate__keys__gui_1_1_generate_keys_app_a961a6f38811eac9b0e4b3d2c50aa9a09}\label{classgenerate__keys__gui_1_1_generate_keys_app_a961a6f38811eac9b0e4b3d2c50aa9a09} 
+{\bfseries pin\+\_\+entry} = ttk.\+Entry(self, show="{}\texorpdfstring{$\ast$}{*}"{}, width=30)
+\item 
+\Hypertarget{classgenerate__keys__gui_1_1_generate_keys_app_a54fc39943283ecf6321af83e0d89d470}\label{classgenerate__keys__gui_1_1_generate_keys_app_a54fc39943283ecf6321af83e0d89d470} 
+{\bfseries drive\+\_\+combobox} = ttk.\+Combobox(self, state="{}readonly"{}, width=40)
+\item 
+\Hypertarget{classgenerate__keys__gui_1_1_generate_keys_app_a5b66e02b59ccd140909df0b45fbd5dfc}\label{classgenerate__keys__gui_1_1_generate_keys_app_a5b66e02b59ccd140909df0b45fbd5dfc} 
+{\bfseries refresh\+\_\+drives\+\_\+button} = ttk.\+Button(self, text="{}Odśwież listę dysków"{}, command=self.\+refresh\+\_\+drive\+\_\+list)
+\item 
+\Hypertarget{classgenerate__keys__gui_1_1_generate_keys_app_a8f5043081645b4b4ce33cbcbaf7d20cc}\label{classgenerate__keys__gui_1_1_generate_keys_app_a8f5043081645b4b4ce33cbcbaf7d20cc} 
+{\bfseries generate\+\_\+button} = ttk.\+Button(self, text="{}Generuj Klucze i Zapisz"{}, command=self.\+generate\+\_\+and\+\_\+save\+\_\+keys)
+\item 
+\Hypertarget{classgenerate__keys__gui_1_1_generate_keys_app_a986ff7c54045877adade1984aad2de40}\label{classgenerate__keys__gui_1_1_generate_keys_app_a986ff7c54045877adade1984aad2de40} 
+{\bfseries status\+\_\+text} = scrolledtext.\+Scrolled\+Text(self, height=10, width=60, wrap=tk.\+WORD, state=tk.\+DISABLED)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Klasa aplikacji GUI do generowania kluczy RSA i zapisywania kluczy. 
+
+Pozwala użytkownikowi wygenerować parę kluczy RSA i zapisać\+:
+\begin{DoxyItemize}
+\item klucz publiczny do pliku PEM
+\item klucz prywatny (zaszyfrowany AES-\/\+GCM, klucz wyprowadzany z PIN-\/u) na pendrive. 
+\end{DoxyItemize}
+
+\label{doc-func-members}
+\Hypertarget{classgenerate__keys__gui_1_1_generate_keys_app_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classgenerate__keys__gui_1_1_generate_keys_app_a378705d549eaa02b8b1d748b8c8479e4}\index{generate\_keys\_gui.GenerateKeysApp@{generate\_keys\_gui.GenerateKeysApp}!generate\_and\_save\_keys@{generate\_and\_save\_keys}}
+\index{generate\_and\_save\_keys@{generate\_and\_save\_keys}!generate\_keys\_gui.GenerateKeysApp@{generate\_keys\_gui.GenerateKeysApp}}
+\doxysubsubsection{\texorpdfstring{generate\_and\_save\_keys()}{generate\_and\_save\_keys()}}
+{\footnotesize\ttfamily \label{classgenerate__keys__gui_1_1_generate_keys_app_a378705d549eaa02b8b1d748b8c8479e4} 
+generate\+\_\+keys\+\_\+gui.\+Generate\+Keys\+App.\+generate\+\_\+and\+\_\+save\+\_\+keys (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+
+
+Generuje parę kluczy RSA, szyfruje klucz prywatny i zapisuje oba klucze. 
+
+\begin{DoxyVerb}Główna funkcja wywoływana po kliknięciu przycisku.\end{DoxyVerb}
+ \Hypertarget{classgenerate__keys__gui_1_1_generate_keys_app_a5eb0c8f285ff95ee8c6877d74cd1002f}\index{generate\_keys\_gui.GenerateKeysApp@{generate\_keys\_gui.GenerateKeysApp}!log\_status@{log\_status}}
+\index{log\_status@{log\_status}!generate\_keys\_gui.GenerateKeysApp@{generate\_keys\_gui.GenerateKeysApp}}
+\doxysubsubsection{\texorpdfstring{log\_status()}{log\_status()}}
+{\footnotesize\ttfamily \label{classgenerate__keys__gui_1_1_generate_keys_app_a5eb0c8f285ff95ee8c6877d74cd1002f} 
+generate\+\_\+keys\+\_\+gui.\+Generate\+Keys\+App.\+log\+\_\+status (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{message}{}\end{DoxyParamCaption})}
+
+
+
+Dodaje wiadomość do pola statusu. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & Tekst wiadomości do wyświetlenia.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyVerb}Dodaje wiadomość do pola statusu.\end{DoxyVerb}
+ \Hypertarget{classgenerate__keys__gui_1_1_generate_keys_app_a5e7d9c56d9fe65655ee4084fa8925b49}\index{generate\_keys\_gui.GenerateKeysApp@{generate\_keys\_gui.GenerateKeysApp}!refresh\_drive\_list@{refresh\_drive\_list}}
+\index{refresh\_drive\_list@{refresh\_drive\_list}!generate\_keys\_gui.GenerateKeysApp@{generate\_keys\_gui.GenerateKeysApp}}
+\doxysubsubsection{\texorpdfstring{refresh\_drive\_list()}{refresh\_drive\_list()}}
+{\footnotesize\ttfamily \label{classgenerate__keys__gui_1_1_generate_keys_app_a5e7d9c56d9fe65655ee4084fa8925b49} 
+generate\+\_\+keys\+\_\+gui.\+Generate\+Keys\+App.\+refresh\+\_\+drive\+\_\+list (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+
+
+Odświeża listę dostępnych dysków wymiennych. 
+
+\begin{DoxyVerb}Odświeża listę dostępnych dysków wymiennych.\end{DoxyVerb}
+ 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+generate\+\_\+keys\+\_\+gui.\+py\end{DoxyCompactItemize}

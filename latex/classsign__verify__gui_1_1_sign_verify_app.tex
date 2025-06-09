@@ -1,0 +1,152 @@
+\doxysection{sign\+\_\+verify\+\_\+gui.\+Sign\+Verify\+App Class Reference}
+\hypertarget{classsign__verify__gui_1_1_sign_verify_app}{}\label{classsign__verify__gui_1_1_sign_verify_app}\index{sign\_verify\_gui.SignVerifyApp@{sign\_verify\_gui.SignVerifyApp}}
+
+
+Główna klasa aplikacji GUI do podpisywania i weryfikacji PDF.  
+
+
+Inheritance diagram for sign\+\_\+verify\+\_\+gui.\+Sign\+Verify\+App\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classsign__verify__gui_1_1_sign_verify_app}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classsign__verify__gui_1_1_sign_verify_app_a169ad010ba3632d651ffc39b8d08a659}\label{classsign__verify__gui_1_1_sign_verify_app_a169ad010ba3632d651ffc39b8d08a659} 
+{\bfseries \+\_\+\+\_\+init\+\_\+\+\_\+} (self)
+\begin{DoxyCompactList}\small\item\em Inicjalizacja głównego okna aplikacji i komponentów GUI. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classsign__verify__gui_1_1_sign_verify_app_a4afbb1a3b8d0e9093538b741a687c82a}{log\+\_\+message}} (self, message, level="{}INFO"{})
+\begin{DoxyCompactList}\small\item\em Dodaje wiadomość do logów. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classsign__verify__gui_1_1_sign_verify_app_a6e704450471d9d38d247908cb42c4b2c}{set\+\_\+status}} (self, label\+\_\+widget, message, level="{}info"{})
+\begin{DoxyCompactList}\small\item\em Ustawia tekst i styl etykiety statusu. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classsign__verify__gui_1_1_sign_verify_app_a511d7351503ca21c45021b3f40457257}{check\+\_\+pendrive}} (self)
+\begin{DoxyCompactList}\small\item\em Sprawdza obecność pendrive i klucza prywatnego. \end{DoxyCompactList}\item 
+\Hypertarget{classsign__verify__gui_1_1_sign_verify_app_a5aa3758a84e294f8016d10692e28b013}\label{classsign__verify__gui_1_1_sign_verify_app_a5aa3758a84e294f8016d10692e28b013} 
+{\bfseries check\+\_\+pendrive\+\_\+periodically} (self)
+\begin{DoxyCompactList}\small\item\em Okresowo sprawdza obecność pendrive co 5 sekund. \end{DoxyCompactList}\item 
+\Hypertarget{classsign__verify__gui_1_1_sign_verify_app_ae206ffd10eda271251e2892164e4e02c}\label{classsign__verify__gui_1_1_sign_verify_app_ae206ffd10eda271251e2892164e4e02c} 
+{\bfseries select\+\_\+pdf\+\_\+to\+\_\+sign} (self)
+\begin{DoxyCompactList}\small\item\em Okno dialogowe do wyboru pliku PDF do podpisania. \end{DoxyCompactList}\item 
+\Hypertarget{classsign__verify__gui_1_1_sign_verify_app_a7bd4d93ed96351fc50977a6b6c30c6c3}\label{classsign__verify__gui_1_1_sign_verify_app_a7bd4d93ed96351fc50977a6b6c30c6c3} 
+{\bfseries select\+\_\+pdf\+\_\+to\+\_\+verify} (self)
+\begin{DoxyCompactList}\small\item\em Okno dialogowe do wyboru pliku PDF do weryfikacji. \end{DoxyCompactList}\item 
+\Hypertarget{classsign__verify__gui_1_1_sign_verify_app_acbb6ccc0f9722b5021425c5ab86cc796}\label{classsign__verify__gui_1_1_sign_verify_app_acbb6ccc0f9722b5021425c5ab86cc796} 
+{\bfseries select\+\_\+public\+\_\+key\+\_\+for\+\_\+verify} (self)
+\begin{DoxyCompactList}\small\item\em Okno dialogowe do wyboru klucza publicznego PEM do weryfikacji. \end{DoxyCompactList}\item 
+\Hypertarget{classsign__verify__gui_1_1_sign_verify_app_a90f5f4de951b123eee806bd1e55742b6}\label{classsign__verify__gui_1_1_sign_verify_app_a90f5f4de951b123eee806bd1e55742b6} 
+{\bfseries sign\+\_\+document} (self)
+\begin{DoxyCompactList}\small\item\em Logika podpisywania dokumentu PDF\+: Odczytuje klucz prywatny (PIN), podpisuje hash PDF, zapisuje podpis w metadanych. \end{DoxyCompactList}\item 
+\Hypertarget{classsign__verify__gui_1_1_sign_verify_app_a119a881e3a328c8ac9aed1a92a96ce72}\label{classsign__verify__gui_1_1_sign_verify_app_a119a881e3a328c8ac9aed1a92a96ce72} 
+{\bfseries verify\+\_\+signature} (self)
+\begin{DoxyCompactList}\small\item\em Logika weryfikacji podpisu PDF\+: Porównuje hash dokumentu z podpisem zapisanym w metadanych. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classsign__verify__gui_1_1_sign_verify_app_a117cb8c4dbf4c42ea9c8399333701e66}\label{classsign__verify__gui_1_1_sign_verify_app_a117cb8c4dbf4c42ea9c8399333701e66} 
+{\bfseries pdf\+\_\+to\+\_\+sign\+\_\+path} = tk.\+String\+Var()
+\item 
+\Hypertarget{classsign__verify__gui_1_1_sign_verify_app_a50c7ca82a4b080b5d6a6979a8ba5923a}\label{classsign__verify__gui_1_1_sign_verify_app_a50c7ca82a4b080b5d6a6979a8ba5923a} 
+{\bfseries public\+\_\+key\+\_\+path\+\_\+verify} = tk.\+String\+Var()
+\item 
+\Hypertarget{classsign__verify__gui_1_1_sign_verify_app_a799e71c6cc0160a3e013d7fab1f1e52e}\label{classsign__verify__gui_1_1_sign_verify_app_a799e71c6cc0160a3e013d7fab1f1e52e} 
+{\bfseries notebook} = ttk.\+Notebook(self)
+\item 
+\Hypertarget{classsign__verify__gui_1_1_sign_verify_app_a41f0e17f00c1f27f4a2d59cdf5cafb5a}\label{classsign__verify__gui_1_1_sign_verify_app_a41f0e17f00c1f27f4a2d59cdf5cafb5a} 
+{\bfseries sign\+\_\+frame} = ttk.\+Frame(self.\+notebook, padding="{}10"{})
+\item 
+\Hypertarget{classsign__verify__gui_1_1_sign_verify_app_a9951991a2f76cdeb7e0cb949496241de}\label{classsign__verify__gui_1_1_sign_verify_app_a9951991a2f76cdeb7e0cb949496241de} 
+{\bfseries check\+\_\+pendrive\+\_\+periodically}
+\item 
+\Hypertarget{classsign__verify__gui_1_1_sign_verify_app_a40cf2e057b7295ea540439f32a9a6b8e}\label{classsign__verify__gui_1_1_sign_verify_app_a40cf2e057b7295ea540439f32a9a6b8e} 
+{\bfseries log\+\_\+text} = scrolledtext.\+Scrolled\+Text(self, height=8, width=80, wrap=tk.\+WORD, state=tk.\+DISABLED)
+\item 
+\Hypertarget{classsign__verify__gui_1_1_sign_verify_app_a6e8ee75885f3a9c293b1d17f82ebbdd3}\label{classsign__verify__gui_1_1_sign_verify_app_a6e8ee75885f3a9c293b1d17f82ebbdd3} 
+{\bfseries pendrive\+\_\+status\+\_\+label}
+\item 
+\Hypertarget{classsign__verify__gui_1_1_sign_verify_app_a55ba642ce521584cf5f8dfcd1ea393e9}\label{classsign__verify__gui_1_1_sign_verify_app_a55ba642ce521584cf5f8dfcd1ea393e9} 
+int {\bfseries pin\+\_\+entry\+\_\+sign} = 1
+\item 
+\Hypertarget{classsign__verify__gui_1_1_sign_verify_app_aaf654831762bfb1279cb05c5515ed13f}\label{classsign__verify__gui_1_1_sign_verify_app_aaf654831762bfb1279cb05c5515ed13f} 
+{\bfseries sign\+\_\+status\+\_\+label} = ttk.\+Label(frame, text="{}-\/"{}, style=\textquotesingle{}Status.\+TLabel\textquotesingle{}, width=70); self.\+sign\+\_\+status\+\_\+label.\+grid(row=row, column=0, columnspan=3, sticky=tk.\+W)
+\item 
+\Hypertarget{classsign__verify__gui_1_1_sign_verify_app_a16220dea763862320673784d30c8b38b}\label{classsign__verify__gui_1_1_sign_verify_app_a16220dea763862320673784d30c8b38b} 
+{\bfseries verify\+\_\+status\+\_\+label} = ttk.\+Label(frame, text="{}-\/"{}, style=\textquotesingle{}Status.\+TLabel\textquotesingle{}, width=70); self.\+verify\+\_\+status\+\_\+label.\+grid(row=row, column=0, columnspan=3, sticky=tk.\+W)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classsign__verify__gui_1_1_sign_verify_app_ac70fb37fc6d5e976d9a04f4a76869b12}\label{classsign__verify__gui_1_1_sign_verify_app_ac70fb37fc6d5e976d9a04f4a76869b12} 
+{\bfseries \+\_\+create\+\_\+log\+\_\+area} (self)
+\begin{DoxyCompactList}\small\item\em Tworzy obszar logów (Scrolled\+Text). \end{DoxyCompactList}\item 
+\Hypertarget{classsign__verify__gui_1_1_sign_verify_app_ad0902ce48538531ac9b5d9406a3d94ca}\label{classsign__verify__gui_1_1_sign_verify_app_ad0902ce48538531ac9b5d9406a3d94ca} 
+{\bfseries \+\_\+create\+\_\+sign\+\_\+widgets} (self)
+\begin{DoxyCompactList}\small\item\em Tworzy komponenty GUI dla zakładki podpisywania dokumentu. \end{DoxyCompactList}\item 
+\Hypertarget{classsign__verify__gui_1_1_sign_verify_app_a2cdfd9a750b1bec82c47df8827086d07}\label{classsign__verify__gui_1_1_sign_verify_app_a2cdfd9a750b1bec82c47df8827086d07} 
+{\bfseries \+\_\+create\+\_\+verify\+\_\+widgets} (self)
+\begin{DoxyCompactList}\small\item\em Tworzy komponenty GUI dla zakładki weryfikacji podpisu. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Główna klasa aplikacji GUI do podpisywania i weryfikacji PDF. 
+
+Dziedziczy po tkinter.\+Tk. 
+
+\label{doc-func-members}
+\Hypertarget{classsign__verify__gui_1_1_sign_verify_app_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classsign__verify__gui_1_1_sign_verify_app_a511d7351503ca21c45021b3f40457257}\index{sign\_verify\_gui.SignVerifyApp@{sign\_verify\_gui.SignVerifyApp}!check\_pendrive@{check\_pendrive}}
+\index{check\_pendrive@{check\_pendrive}!sign\_verify\_gui.SignVerifyApp@{sign\_verify\_gui.SignVerifyApp}}
+\doxysubsubsection{\texorpdfstring{check\_pendrive()}{check\_pendrive()}}
+{\footnotesize\ttfamily \label{classsign__verify__gui_1_1_sign_verify_app_a511d7351503ca21c45021b3f40457257} 
+sign\+\_\+verify\+\_\+gui.\+Sign\+Verify\+App.\+check\+\_\+pendrive (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+
+
+Sprawdza obecność pendrive i klucza prywatnego. 
+
+\begin{DoxyReturn}{Returns}
+True jeśli znaleziono, False w przeciwnym razie. 
+\end{DoxyReturn}
+\Hypertarget{classsign__verify__gui_1_1_sign_verify_app_a4afbb1a3b8d0e9093538b741a687c82a}\index{sign\_verify\_gui.SignVerifyApp@{sign\_verify\_gui.SignVerifyApp}!log\_message@{log\_message}}
+\index{log\_message@{log\_message}!sign\_verify\_gui.SignVerifyApp@{sign\_verify\_gui.SignVerifyApp}}
+\doxysubsubsection{\texorpdfstring{log\_message()}{log\_message()}}
+{\footnotesize\ttfamily \label{classsign__verify__gui_1_1_sign_verify_app_a4afbb1a3b8d0e9093538b741a687c82a} 
+sign\+\_\+verify\+\_\+gui.\+Sign\+Verify\+App.\+log\+\_\+message (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{message}{, }\item[{}]{level}{ = {\ttfamily "{}INFO"{}}}\end{DoxyParamCaption})}
+
+
+
+Dodaje wiadomość do logów. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & Tekst wiadomości. \\
+\hline
+{\em level} & Poziom logowania (INFO, ERROR, SUCCESS itp.). \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classsign__verify__gui_1_1_sign_verify_app_a6e704450471d9d38d247908cb42c4b2c}\index{sign\_verify\_gui.SignVerifyApp@{sign\_verify\_gui.SignVerifyApp}!set\_status@{set\_status}}
+\index{set\_status@{set\_status}!sign\_verify\_gui.SignVerifyApp@{sign\_verify\_gui.SignVerifyApp}}
+\doxysubsubsection{\texorpdfstring{set\_status()}{set\_status()}}
+{\footnotesize\ttfamily \label{classsign__verify__gui_1_1_sign_verify_app_a6e704450471d9d38d247908cb42c4b2c} 
+sign\+\_\+verify\+\_\+gui.\+Sign\+Verify\+App.\+set\+\_\+status (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{label\+\_\+widget}{, }\item[{}]{message}{, }\item[{}]{level}{ = {\ttfamily "{}info"{}}}\end{DoxyParamCaption})}
+
+
+
+Ustawia tekst i styl etykiety statusu. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em label\+\_\+widget} & Etykieta do zmiany. \\
+\hline
+{\em message} & Tekst statusu. \\
+\hline
+{\em level} & Poziom statusu (info, success, error). \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+sign\+\_\+verify\+\_\+gui.\+py\end{DoxyCompactItemize}
